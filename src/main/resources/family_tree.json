@@ -1,0 +1,18 @@
+{
+  "Id": 0,
+  "level" : 0,
+  "label": "root",
+  "parent": 0,
+  "children": [
+    {
+      "Id": 1,
+      "label": "branch",
+      "parent": 1
+    },
+    {
+      "Id": 2,
+      "label": "branch",
+      "parent": 1
+    }
+  ]
+}
