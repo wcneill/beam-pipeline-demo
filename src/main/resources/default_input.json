@@ -6,11 +6,13 @@
   "children": [
     {
       "Id": 1,
+      "level": 1,
       "label": "branch",
       "parent": 1
     },
     {
       "Id": 2,
+      "level": 1,
       "label": "branch",
       "parent": 1
     }

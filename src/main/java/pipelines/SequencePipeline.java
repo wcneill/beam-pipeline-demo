@@ -1,40 +1,41 @@
-
 package pipelines;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import options.InOutOptions;
+import org.apache.beam.repackaged.direct_java.runners.core.construction.renderer.PipelineDotRenderer;
 import org.apache.beam.runners.direct.DirectRunner;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;
-import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.Create;
-import transforms.JSONTreeToPaths;
-import transforms.PathsToCSV;
+import transforms.StringToTree;
+import transforms.TreeToPaths;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SequencePipeline {
 
-    public static void main(String[] args) throws IOException {
-        PipelineOptions options = PipelineOptionsFactory.create();
+    public static void main(String... args) throws IOException {
+
+        PipelineOptionsFactory.register(InOutOptions.class);
+        InOutOptions options = PipelineOptionsFactory.fromArgs(args).as(InOutOptions.class);
+
         options.setRunner(DirectRunner.class);
         Pipeline pipeline = Pipeline.create(options);
 
-        String json = readAndConvertJson("src/main/resources/family_tree.json");
-
+        String json = readAndConvertJson(options.getInput());
         pipeline
             .apply(Create.of(json))
-            .apply("Traverse Json tree", new JSONTreeToPaths())
-            .apply("Format tree paths", new PathsToCSV())
-            .apply("Write to CSV", TextIO.write().to("src/main/resources/paths.csv")
-                .withoutSharding());
-
+            .apply("Create JSON tree model", new StringToTree())
+            .apply("Traverse JSON tree model", new TreeToPaths())
+            .apply("Write paths to CSV", TextIO.write().to(options.getOutput()));
         pipeline.run().waitUntilFinish();
 
+        saveDotString(pipeline, "src/main/resources/dot_string.svg");
     }
 
     private static String readAndConvertJson(String path) throws IOException {
@@ -47,6 +48,16 @@ public class SequencePipeline {
         return json.replaceAll("\\R", " ");
     }
 
+    public static void saveDotString(Pipeline p, String filePath) {
 
+        Path saveTo = FileSystems.getDefault().getPath(filePath);
+        String dot = PipelineDotRenderer.toDotString(p);
+        try {
+            byte[] bytes = dot.getBytes("UTF-8");
+            Files.write(saveTo, bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 

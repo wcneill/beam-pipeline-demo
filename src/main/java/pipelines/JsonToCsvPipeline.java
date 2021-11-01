@@ -1,9 +1,6 @@
-
-
 package pipelines;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import options.InOutOptions;
 import pojos.Person;
 import transforms.PersonToCsvRow;
@@ -14,11 +11,7 @@ import org.apache.beam.sdk.extensions.jackson.ParseJsons;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class JsonToCsvPipeline {
 
