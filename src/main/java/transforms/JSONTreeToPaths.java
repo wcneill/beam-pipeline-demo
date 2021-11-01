@@ -1,11 +1,10 @@
 
 package transforms;
 
-
+import coders.JsonNodeCoder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.beam.sdk.coders.SerializableCoder;
 import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.transforms.PTransform;
 import org.apache.beam.sdk.transforms.SimpleFunction;
@@ -39,8 +38,8 @@ public class JSONTreeToPaths extends PTransform<PCollection<String>, PCollection
     public PCollection<List<String>> expand(PCollection<String> input) {
         return input
             .apply(MapElements.via(new GetRootNode()))
-            .apply(MapElements.via(new ExtractPathsFromTree()))
-            .setCoder(SerializableCoder.of(List<String>.class));
+//            .setCoder(new JsonNodeCoder())
+            .apply(MapElements.via(new ExtractPathsFromTree()));
     }
 
     private static JsonNode getRoot(String jsonString) throws JsonProcessingException {
