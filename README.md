@@ -3,8 +3,8 @@ Demo of how to use Apache Beam to convert JSON input stream to rows in a CSV (or
 
 Pipelines consist of a series of transforms. Each transform has an input type and output type. Below is a simple example that shows how to read JSON input to a POJO, and then convert that POJO to a line of CSV.
 
-Here's our simple Person class:
-```
+Here's our simple `Person` class:
+```java
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -23,7 +23,7 @@ public class Person implements Serializable {
 }
 ```
 
-Here is a transform that operates on a Person input and returns an output `String`
+Here is a transform that operates on a `Person` input and returns an output `String`
 ```java
  public class PersonToCsvRow extends PTransform<PCollection<Person>, PCollection<String>> {
 
